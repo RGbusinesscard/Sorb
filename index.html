@@ -54,14 +54,14 @@
      compteur (z-index 1, sous le compteur qui est en z-index 2) :
      les chiffres du haut s'affichent donc en entier PAR-DESSUS cette
      photo. Pour insérer ta photo : voir #photoTop dans le HTML. */
-  #photoTop{
+  #photoTop.jpeg{
     position:absolute;left:0;top:0;width:100%;height:16.02%;
     background:#D6DADF;z-index:1;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
   }
-  #photoTop img{width:100%;height:100%;object-fit:cover;display:block}
-  #photoTop .slot{text-align:center;color:#7A838C;font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;line-height:1.7;padding:0 8%}
-  #photoTop .slot svg{display:block;margin:0 auto 4px;width:16%;height:auto}
+  #photoTop.jpeg img{width:100%;height:100%;object-fit:cover;display:block}
+  #photoTop.jpeg .slot{text-align:center;color:#7A838C;font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;line-height:1.7;padding:0 8%}
+  #photoTop.jpeg .slot svg{display:block;margin:0 auto 4px;width:16%;height:auto}
  
   /* ---------- bandeau bleu ---------- */
   .band.sec{top:16.02%;height:27.21%;background:var(--navy);color:#fff;z-index:1;display:flex}
@@ -111,14 +111,14 @@
      texte "spécimen"), grâce à un z-index élevé. Le compteur s'arrête
      de toute façon pile à 73.03%, donc rien à cacher de ce côté-là.
      Pour insérer ta photo : voir #photoBottom dans le HTML. */
-  #photoBottom{
+  #photoBottom.jpeg{
     position:absolute;left:0;right:0;top:73.03%;bottom:0;
     background:#D6DADF;z-index:8;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
   }
-  #photoBottom img{width:100%;height:100%;object-fit:cover;display:block}
-  #photoBottom .slot{text-align:center;color:#7A838C;font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;line-height:1.7;padding:0 8%}
-  #photoBottom .slot svg{display:block;margin:0 auto 6px;width:14%;height:auto}
+  #photoBottom.jpeg img{width:100%;height:100%;object-fit:cover;display:block}
+  #photoBottom.jpeg .slot{text-align:center;color:#7A838C;font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;line-height:1.7;padding:0 8%}
+  #photoBottom.jpeg .slot svg{display:block;margin:0 auto 6px;width:14%;height:auto}
  
   /* ---------- compteur gris vertical ----------
      Position et étendue calées EXACTEMENT sur la référence :
@@ -160,7 +160,7 @@
  
   <!-- ZONE PHOTO DU HAUT : remplace tout le bloc .slot ci-dessous par
        <img src="ta-photo-du-haut.jpg" alt=""> pour insérer l'image. -->
-  <div id="photoTop">
+  <div id="photoTop.jpeg">
     <div class="slot">
       <svg width="40" height="40" viewBox="0 0 46 46" fill="none" stroke="#868F98" stroke-width="2">
         <circle cx="23" cy="17" r="8"/><path d="M8 40c0-8 6.7-12 15-12s15 4 15 12"/>
@@ -182,7 +182,7 @@
   </div>
  
   <!-- POUR TA PHOTO : remplace tout le bloc .slot par <img src="photo.jpg" alt=""> -->
-  <div class="photo" id="photoMiddle">
+  <div class="photo" id="photoMiddle.PNG">
     <div class="slot">
       <svg width="46" height="46" viewBox="0 0 46 46" fill="none" stroke="#868F98" stroke-width="2">
         <circle cx="23" cy="17" r="8"/><path d="M8 40c0-8 6.7-12 15-12s15 4 15 12"/>
@@ -233,7 +233,7 @@
  
   <!-- ZONE PHOTO DU BAS : remplace tout le bloc .slot ci-dessous par
        <img src="ta-photo-du-bas.jpg" alt=""> pour insérer l'image. -->
-  <div id="photoBottom">
+  <div id="photoBottom.jpeg">
     <div class="slot">
       <svg width="34" height="34" viewBox="0 0 46 46" fill="none" stroke="#868F98" stroke-width="2">
         <circle cx="23" cy="17" r="8"/><path d="M8 40c0-8 6.7-12 15-12s15 4 15 12"/>
