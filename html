@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carte étudiante — Université Novaris (fictive)</title>
+<style>
+  :root{
+    --navy:#12386E;
+    --amber:#E8A02A;
+    --amber-2:#D68E1E;
+    --amber-3:#B87613;
+    --grey:#ECECEC;
+    --ghost:#9A9A9A;
+    --cardw:430px;
+    --ratio: 1179 / 2047;   /* ratio exact de l'image de référence */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(120% 80% at 50% 0%,#6B7078 0%,#3E4248 70%);
+    display:flex;align-items:center;justify-content:center;
+    padding:36px 14px;
+    font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+ 
+  /* La carte respecte le ratio exact de l'image fournie (1179 x 2047).
+     Toutes les sections ci-dessous sont positionnées en % de cette
+     hauteur, mesurés directement sur l'image. */
+  .card{
+    width:var(--cardw);
+    aspect-ratio:var(--ratio);
+    background:#fff;
+    position:relative;
+    overflow:hidden;
+    border-radius:6px;
+    box-shadow:0 30px 70px rgba(0,0,0,.5),0 2px 0 rgba(255,255,255,.35) inset;
+    container-type:size;
+    container-name:card;
+  }
+ 
+  .sec{position:absolute;left:0;width:100%}
+ 
+  /* ---------- repères mesurés sur la référence ---------- */
+  /* header       0%     -> 16.02% */
+  /* bandeau bleu 16.02% -> 43.23% */
+  /* bloc gris    43.23% -> 57.01% */
+  /* bandeau or   57.01% -> 60.28% */
+  /* code-barres  60.28% -> 73.03% (ligne pointillée) */
+  /* pied         73.03% -> 100%   */
+ 
+  /* zone photo du HAUT — pleine largeur, et cette fois DERRIÈRE le
+     compteur (z-index 1, sous le compteur qui est en z-index 2) :
+     les chiffres du haut s'affichent donc en entier PAR-DESSUS cette
+     photo. Pour insérer ta photo : voir #photoTop dans le HTML. */
+  #photoTop{
+    position:absolute;left:0;top:0;width:100%;height:16.02%;
+    background:#D6DADF;z-index:1;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #photoTop img{width:100%;height:100%;object-fit:cover;display:block}
+  #photoTop .slot{text-align:center;color:#7A838C;font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;line-height:1.7;padding:0 8%}
+  #photoTop .slot svg{display:block;margin:0 auto 4px;width:16%;height:auto}
+ 
+  /* ---------- bandeau bleu ---------- */
+  .band.sec{top:16.02%;height:27.21%;background:var(--navy);color:#fff;z-index:1;display:flex}
+  .band-l{flex:1;min-width:0;padding:1.5cqh 0 0 6cqw}
+  .title{font-size:6.3cqw;font-weight:600;line-height:1.05;letter-spacing:.004em}
+  .title small{display:block;margin-top:1%;font-size:.6em;letter-spacing:.03em;font-weight:600}
+  .year{margin-top:1.6cqh;font-size:5.8cqw;font-weight:700;color:var(--amber)}
+  .ids{margin-top:1.6cqh;font-size:3.5cqw;line-height:1.6;font-variant-numeric:tabular-nums}
+ 
+  /* photo : positionnée en absolu à l'emplacement mesuré exact
+     x 55.3% -> 92.45%, y 16.02% -> 43.23% (calée sur le bandeau bleu) */
+  .photo{
+    position:absolute;left:55.3%;top:16.02%;width:37.15%;height:27.21%;
+    background:#D6DADF;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;z-index:5;      /* seul élément qui passe devant le compteur */
+  }
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo .slot{text-align:center;color:#7A838C;font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;line-height:1.7;padding:0 8%}
+  .photo .slot svg{display:block;margin:0 auto 6px;width:22%;height:auto}
+ 
+  /* ---------- identité ---------- */
+  .identity.sec{top:43.23%;height:13.77%;background:var(--grey);z-index:1;padding:0.7cqh 6cqw 0}
+  .lastname{font-size:5.7cqw;color:var(--navy);text-transform:uppercase;line-height:1.15}
+  .firstname{font-size:5cqw;color:var(--navy);margin-top:0.2cqh}
+  .program{margin-top:1.5cqh;font-size:3.1cqw;color:var(--amber-3);letter-spacing:.01em}
+ 
+  /* ---------- bandeau orange ---------- */
+  .stamp.sec{top:57.01%;height:3.27%;display:flex;z-index:1;color:#fff;font-variant-numeric:tabular-nums}
+  .stamp>div{padding:.6% 1.4%;text-align:center;white-space:nowrap;font-size:3.3cqw;letter-spacing:.01em;display:flex;align-items:center;justify-content:center}
+  .s-ref {flex:1.25;background:var(--amber)}
+  .s-date{flex:1.05;background:var(--amber-2)}
+  .s-time{flex:1.25;background:var(--amber-3)}
+  .s-time .ms{font-size:.74em;opacity:.92}
+  .dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#fff;margin-right:5px;
+    animation:pulse 1s steps(1,end) infinite}
+  @keyframes pulse{0%,49%{opacity:1}50%,100%{opacity:.25}}
+ 
+  /* ---------- code-barres ---------- */
+  .code.sec{top:60.28%;height:12.75%;text-align:center;z-index:1;padding:0.8cqh 6cqw 0}
+  .bars{display:block;width:76%;height:68%;margin:0 auto}
+  .code-num{margin-top:0.3cqh;font-size:2.9cqw;letter-spacing:.17em;color:#0F0F0F;font-variant-numeric:tabular-nums}
+ 
+  .perf{position:absolute;left:2%;right:2%;top:73.03%;border-top:1px dashed #B9B9B9;z-index:9}
+ 
+  /* zone photo du BAS — occupe TOUT l'espace sous la ligne pointillée,
+     bord à bord, et passe AU-DESSUS de tout ce qui s'y trouve (ici le
+     texte "spécimen"), grâce à un z-index élevé. Le compteur s'arrête
+     de toute façon pile à 73.03%, donc rien à cacher de ce côté-là.
+     Pour insérer ta photo : voir #photoBottom dans le HTML. */
+  #photoBottom{
+    position:absolute;left:0;right:0;top:73.03%;bottom:0;
+    background:#D6DADF;z-index:8;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #photoBottom img{width:100%;height:100%;object-fit:cover;display:block}
+  #photoBottom .slot{text-align:center;color:#7A838C;font-size:2.2cqw;letter-spacing:.14em;text-transform:uppercase;line-height:1.7;padding:0 8%}
+  #photoBottom .slot svg{display:block;margin:0 auto 6px;width:14%;height:auto}
+ 
+  /* ---------- compteur gris vertical ----------
+     Position et étendue calées EXACTEMENT sur la référence :
+     x 82.78% -> 98.05% (colonne), y 1.91% -> 73.03% (du haut de la carte
+     jusqu'à la ligne pointillée, juste après le code-barres — c'est très
+     précisément là que s'arrête le texte gris sur l'image fournie).
+     z-index 2 : au-dessus de tout (header, bandeau bleu, gris, orange,
+     code-barres) mais SOUS la photo (z-index 5), seule à le recouvrir. */
+  .ghost{
+    position:absolute;left:82.78%;width:15.3%;
+    top:1.91%;bottom:26.97%;
+    z-index:2;pointer-events:none;
+    display:flex;align-items:flex-start;justify-content:center;
+    overflow:hidden;
+  }
+  .ghost span{
+    writing-mode:vertical-rl;
+    color:var(--ghost);
+    font-weight:700;
+    font-variant-numeric:tabular-nums;
+    white-space:nowrap;
+  }
+ 
+  .specimen{
+    position:absolute;left:0;right:0;top:71.8%;text-align:center;
+    font-size:1.5cqw;letter-spacing:.24em;text-transform:uppercase;
+    color:#A8ADB2;z-index:1;
+    /* casé dans le petit espace libre entre le numéro du code-barres
+       et la ligne pointillée : la zone sous la ligne est maintenant
+       100% photo, donc ce texte ne peut plus y vivre. */
+  }
+</style>
+</head>
+<body>
+ 
+<div class="card" id="card">
+ 
+  <div class="ghost" id="ghostBox"><span id="g">--:--:--:--</span></div>
+ 
+  <!-- ZONE PHOTO DU HAUT : remplace tout le bloc .slot ci-dessous par
+       <img src="ta-photo-du-haut.jpg" alt=""> pour insérer l'image. -->
+  <div id="photoTop">
+    <div class="slot">
+      <svg width="40" height="40" viewBox="0 0 46 46" fill="none" stroke="#868F98" stroke-width="2">
+        <circle cx="23" cy="17" r="8"/><path d="M8 40c0-8 6.7-12 15-12s15 4 15 12"/>
+      </svg>
+      photo du haut<br>ici
+    </div>
+  </div>
+ 
+  <div class="band sec">
+    <div class="band-l">
+      <div class="title">Carte étudiante<small>NOVARIS RIVE-SUD FR</small></div>
+      <div class="year">2026-2027</div>
+      <div class="ids">
+        N° étudiant : 24071593<br>
+        N° dossier : 24NVR0731<br>
+        Né(e) le : 14/08/2008
+      </div>
+    </div>
+  </div>
+ 
+  <!-- POUR TA PHOTO : remplace tout le bloc .slot par <img src="photo.jpg" alt=""> -->
+  <div class="photo" id="photoMiddle">
+    <div class="slot">
+      <svg width="46" height="46" viewBox="0 0 46 46" fill="none" stroke="#868F98" stroke-width="2">
+        <circle cx="23" cy="17" r="8"/><path d="M8 40c0-8 6.7-12 15-12s15 4 15 12"/>
+      </svg>
+      photo du milieu<br>ici
+    </div>
+  </div>
+ 
+  <div class="identity sec">
+    <div class="lastname">Mercier Laval</div>
+    <div class="firstname">Camille</div>
+    <div class="program">FSJP-EAD — LIC 1 ET 2 — L2D204</div>
+  </div>
+ 
+  <div class="stamp sec">
+    <div class="s-ref"><span class="dot"></span>RÉF : 418702356</div>
+    <div class="s-date" id="d">--/--/----</div>
+    <div class="s-time"><span id="t">--:--:--</span><span class="ms" id="ms">:00</span></div>
+  </div>
+ 
+  <div class="code sec">
+    <!-- code-barres décoratif : n'encode aucune donnée -->
+    <svg class="bars" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="#000">
+        <rect x="0" y="0" width="4" height="110"/><rect x="8" y="0" width="2" height="110"/>
+        <rect x="14" y="0" width="7" height="110"/><rect x="26" y="0" width="2" height="110"/>
+        <rect x="32" y="0" width="5" height="110"/><rect x="42" y="0" width="3" height="110"/>
+        <rect x="50" y="0" width="8" height="110"/><rect x="63" y="0" width="2" height="110"/>
+        <rect x="69" y="0" width="4" height="110"/><rect x="78" y="0" width="6" height="110"/>
+        <rect x="89" y="0" width="2" height="110"/><rect x="96" y="0" width="9" height="110"/>
+        <rect x="110" y="0" width="3" height="110"/><rect x="118" y="0" width="2" height="110"/>
+        <rect x="125" y="0" width="6" height="110"/><rect x="136" y="0" width="4" height="110"/>
+        <rect x="145" y="0" width="2" height="110"/><rect x="152" y="0" width="8" height="110"/>
+        <rect x="165" y="0" width="3" height="110"/><rect x="173" y="0" width="5" height="110"/>
+        <rect x="183" y="0" width="2" height="110"/><rect x="190" y="0" width="7" height="110"/>
+        <rect x="202" y="0" width="3" height="110"/><rect x="210" y="0" width="2" height="110"/>
+        <rect x="217" y="0" width="9" height="110"/><rect x="231" y="0" width="2" height="110"/>
+        <rect x="238" y="0" width="5" height="110"/><rect x="248" y="0" width="3" height="110"/>
+        <rect x="256" y="0" width="7" height="110"/><rect x="268" y="0" width="2" height="110"/>
+        <rect x="275" y="0" width="4" height="110"/><rect x="284" y="0" width="6" height="110"/>
+        <rect x="295" y="0" width="5" height="110"/>
+      </g>
+    </svg>
+    <div class="code-num">101 000 418 702</div>
+  </div>
+ 
+  <div class="perf"></div>
+ 
+  <!-- ZONE PHOTO DU BAS : remplace tout le bloc .slot ci-dessous par
+       <img src="ta-photo-du-bas.jpg" alt=""> pour insérer l'image. -->
+  <div id="photoBottom">
+    <div class="slot">
+      <svg width="34" height="34" viewBox="0 0 46 46" fill="none" stroke="#868F98" stroke-width="2">
+        <circle cx="23" cy="17" r="8"/><path d="M8 40c0-8 6.7-12 15-12s15 4 15 12"/>
+      </svg>
+      photo du bas<br>ici
+    </div>
+  </div>
+ 
+  <div class="specimen">spécimen — établissement fictif</div>
+</div>
+ 
+<script>
+(function(){
+  var dEl  = document.getElementById('d'),
+      tEl  = document.getElementById('t'),
+      msEl = document.getElementById('ms'),
+      gEl  = document.getElementById('g'),
+      ghostBox = document.getElementById('ghostBox'),
+      lastSec = -1, lastDay = -1;
+ 
+  function p(n,l){ return String(n).padStart(l,'0'); }
+ 
+  // Le compteur affiche "HH:MM:SS:MS" = 11 caractères fixes.
+  // Deux contraintes à respecter en même temps, comme sur la référence :
+  //  1) l'épaisseur du texte (donc le corps de police) doit remplir la
+  //     largeur de la colonne mesurée sur l'image (82.78% -> 98.05%) ;
+  //  2) les 11 caractères doivent occuper exactement la hauteur mesurée
+  //     (du haut de la carte jusqu'à la ligne pointillée).
+  // On fixe donc le font-size sur la LARGEUR (pour "grossir" le texte),
+  // puis on comble l'écart de hauteur avec un letter-spacing (l'espacement
+  // vertical naturel entre glyphes, en écriture verticale, est plus serré
+  // que le corps de la police).
+  var CHAR_COUNT = 11;
+  function fitGhost(){
+    var box = ghostBox.getBoundingClientRect();
+    var realText = gEl.textContent;
+ 
+    // 1) taille de police calée sur la largeur de la colonne
+    var fs = box.width / 1.12;
+    gEl.style.fontSize = fs + 'px';
+    gEl.style.letterSpacing = '0px';
+ 
+    // 2) on mesure la hauteur naturelle du bloc à cette taille, avec un
+    //    échantillon de chiffres représentatif (et pas les tirets du
+    //    texte par défaut, dont l'avance verticale est bien plus courte
+    //    et fausserait le calcul), puis on ajoute l'espacement manquant
+    //    entre les 11 caractères pour retomber pile sur la hauteur cible.
+    gEl.textContent = '12:34:56:78';
+    var natural = gEl.getBoundingClientRect().height;
+    var extra = (box.height - natural) / (CHAR_COUNT - 1);
+    gEl.style.letterSpacing = extra + 'px';
+ 
+    gEl.textContent = realText;
+  }
+  window.addEventListener('resize', fitGhost);
+  fitGhost();
+ 
+  function tick(){
+    var now = new Date();
+ 
+    if(now.getDate() !== lastDay){
+      lastDay = now.getDate();
+      dEl.textContent = p(now.getDate(),2)+'/'+p(now.getMonth()+1,2)+'/'+now.getFullYear();
+    }
+ 
+    var s = now.getSeconds();
+    if(s !== lastSec){
+      lastSec = s;
+      tEl.textContent = p(now.getHours(),2)+':'+p(now.getMinutes(),2)+':'+p(s,2);
+    }
+ 
+    var ms = p(Math.floor(now.getMilliseconds()/10),2);
+    msEl.textContent = ':'+ms;
+ 
+    gEl.textContent = p(now.getHours(),2)+':'+p(now.getMinutes(),2)+':'+p(s,2)+':'+ms;
+ 
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
